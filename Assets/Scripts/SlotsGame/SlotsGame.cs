@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -8,10 +9,9 @@ public class SlotsGame : MonoBehaviour
 {
     public static SlotsGame Instance;
 
-    PlayerDataManager playerDataManager;
     public SlotMachine slotMachine;
 
-    public List<SlotWinEvent> winningEvents;
+    public List<SlotWinEvent> winningEvents = new List<SlotWinEvent>();
 
     // Item Values
 
@@ -24,14 +24,13 @@ public class SlotsGame : MonoBehaviour
 
     private void Start()
     {
-        playerDataManager = PlayerDataManager.Instance;
-
         StartCoroutine(slotMachine.AutoSpin(GenerateRandomGame));
+        
     }
 
     public List<List<int>> GenerateRandomGame()
     {
-
+            
         List<List<int>> game = new List<List<int>>()
         {
             new List<int>() { 1, 1, 1, 1 },
@@ -47,23 +46,37 @@ public class SlotsGame : MonoBehaviour
     public void EvaluateState(List<List<int>> boardState)
     {
         EvalVertical(boardState);
-        slotMachine.DisplayMatches(winningEvents);
+        ProcessWinnings();
+    }
+
+    public void ProcessWinnings()
+    {
+        foreach (SlotWinEvent win in winningEvents)
+        {
+            PlayerDataManager.Instance.AddCoins(win.winWorth);
+            slotMachine.DisplayMatch(win);
+        }
+
+        winningEvents.Clear();
     }
 
     public void EvalVertical(List<List<int>> boardState)
     {
-        for (int i = 0; i < boardState.Count; i++) {
-            bool allEqual = false;
-            int prev = boardState[i][0];
+        for (int i = 0; i < boardState.Count; i++)
+        {
+            bool allEqual = true;
 
             List<SlotItem> curItems = new List<SlotItem>();
+            curItems.Add(GetSlotItem(i, 0));
+            int prev = boardState[i][0];
 
             for (int j = 1; j < boardState[i].Count; j++)
             {
                 curItems.Add(GetSlotItem(i, j));
-                if (boardState[i][j] != prev) 
+                if (boardState[i][j] != prev)
                 {
-                    allEqual = false; 
+                    print("here");
+                    allEqual = false;
                     break;
                 }
                 prev = boardState[i][j];

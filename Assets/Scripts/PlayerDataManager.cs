@@ -22,6 +22,11 @@ public class PlayerDataManager : MonoBehaviour
         DontDestroyOnLoad(Instance);
     }
 
+    private void Start()
+    {
+        OnCoinChanged?.Invoke(coins);
+    }
+
     public void AddCoins(int numberOfCoins)
     {
         coins += numberOfCoins;

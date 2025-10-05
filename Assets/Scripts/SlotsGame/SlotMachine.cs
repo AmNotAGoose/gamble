@@ -10,6 +10,7 @@ public class SlotMachine : MonoBehaviour
 
     bool isAutoSpinning = false;
     bool isSpinning = false;
+    bool readyForNext = false;
 
     private void Start()
     {
@@ -60,10 +61,12 @@ public class SlotMachine : MonoBehaviour
             StartCoroutine(columns[i].StopSpinning(values[i]));
             yield return new WaitForSeconds(0.5f);
         }
+
+        SlotsGame.Instance.EvaluateState(values);
         isSpinning = false;
     }
 
-    public void DisplayMatches(List<SlotWinEvent> matches)
+    public void DisplayMatch(SlotWinEvent match)
     {
          
     }
