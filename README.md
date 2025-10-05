@@ -5,6 +5,7 @@
 ## https://youtu.be/LTCNl9v2_WI
 
 ## A simple slot machine game
+This is a simple slot machine base game which can be extended to include different patterns, sprites, and effects. 
 
 Supports many many different patterns (horizontal, diagonal, square, t shape)
 
