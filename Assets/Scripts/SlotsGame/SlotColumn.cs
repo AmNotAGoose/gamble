@@ -22,6 +22,8 @@ public class SlotColumn : MonoBehaviour
     public bool isStopped = true;
     public bool minVelocityReached = false;
 
+    private bool readyToSnap = false;
+
     // Items
     public List<SlotItem> slotItems;
     public SlotItem leadItem;
@@ -44,18 +46,17 @@ public class SlotColumn : MonoBehaviour
     void ArrangeItems()
     {
         for (int i = 0; i < slotItems.Count; i++)
+             
         {
             slotItems[i].transform.position = new Vector2(slotItems[i].transform.position.x, maxY - i * itemSpacing);
+            slotItems[i].SetStartingY();
         }
     }
-
     private void Update()
     {
         for (int i = 0; i < slotItems.Count; i++)
         {
             SlotItem curItem = slotItems[i];
-
-            curItem.transform.position += Vector3.down * curVelocity * Time.deltaTime;
 
             if (curItem.transform.position.y < minY)
             {
@@ -68,17 +69,14 @@ public class SlotColumn : MonoBehaviour
                     }
                 }
 
-                if (minVelocityReached && curItem == leadItem)
-                {
-                    curVelocity = 0f;
-                    isStopped = false;
-                }
-
                 curItem.transform.position = new Vector2(curItem.transform.position.x, highestY + itemSpacing);
             }
+
+            float moveAmount = curVelocity * Time.deltaTime;
+            curItem.transform.position += moveAmount * Vector3.down;
         }
     }
-     
+
     public IEnumerator StartSpinning()
     {
         isStopped = false;
@@ -87,7 +85,7 @@ public class SlotColumn : MonoBehaviour
         {
             curVelocity = Mathf.Min(curVelocity + acceleration * Time.deltaTime, maxVelocity);
             yield return null;
-        }
+        } 
         yield break;
     }
 
@@ -95,19 +93,13 @@ public class SlotColumn : MonoBehaviour
     {
         isStopped = true;
 
-        while (isStopped)
+        foreach (var item in slotItems)
         {
-            curVelocity = Mathf.Max(curVelocity - acceleration * Time.deltaTime, minVelocity);
-
-            if (curVelocity == minVelocity)
-            {
-                minVelocityReached = true;
-            }
-             
+            curVelocity = 0;
             yield return null;
+            item.GoToStartingY(0);
         }
 
-        minVelocityReached = false;
         yield break;
     }
 }
