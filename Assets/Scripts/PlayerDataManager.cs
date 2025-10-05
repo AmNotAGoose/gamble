@@ -2,6 +2,7 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerDataManager : MonoBehaviour
 {
@@ -24,6 +25,12 @@ public class PlayerDataManager : MonoBehaviour
 
     private void Start()
     {
+        SceneManager.sceneLoaded += LoadTheCoinsOMGLETMEFINSISHTHIS;
+        OnCoinChanged?.Invoke(coins);
+    }
+    void LoadTheCoinsOMGLETMEFINSISHTHIS(Scene scene, LoadSceneMode mode)
+    {
+        print("asdsad");
         OnCoinChanged?.Invoke(coins);
     }
 

@@ -40,13 +40,13 @@ public class SlotsGame : MonoBehaviour
             new List<int>() { 3, 1, 2, 3 },
         };
 
-        //for (int i = 0; i < game.Count; i++)
-        //{
-        //    for (int j = 0; j < game[i].Count; j++)
-        //    {
-        //        game[i][j] = UnityEngine.Random.Range(0, itemValueSprites.Count);
-        //    }
-        //}
+        for (int i = 0; i < game.Count; i++)
+        {
+            for (int j = 0; j < game[i].Count; j++)
+            {
+                game[i][j] = UnityEngine.Random.Range(0, itemValueSprites.Count);
+            }
+        }
 
 
         return game;
@@ -54,9 +54,111 @@ public class SlotsGame : MonoBehaviour
 
     public void EvaluateState(List<List<int>> boardState)
     {
-        EvalVertical(boardState); 
+        EvalVertical(boardState);
         EvalHorizontal(boardState);
+        EvalTShapes(boardState);
+        EvalSpecialPatterns(boardState);
         StartCoroutine(ProcessWinnings());
+    }
+
+    private void EvalTShapes(List<List<int>> boardState)
+    {
+        int cols = boardState.Count;
+        int rows = boardState[0].Count;
+
+        for (int c = 0; c < cols; c++)
+        {
+            for (int r = 0; r < rows; r++)
+            {
+                // up
+                if (c >= 1 && c < cols - 1 && r < rows - 1)
+                {
+                    var coords = new List<(int, int)>
+                {
+                    (c-1,r), (c,r), (c+1,r), (c,r+1)
+                };
+                    CheckPattern(coords, boardState, 60);
+                }
+
+                // down
+                if (c >= 1 && c < cols - 1 && r > 0)
+                {
+                    var coords = new List<(int, int)>
+                {
+                    (c-1,r), (c,r), (c+1,r), (c,r-1)
+                };
+                    CheckPattern(coords, boardState, 60);
+                }
+
+                // left
+                if (r >= 1 && r < rows - 1 && c < cols - 1)
+                {
+                    var coords = new List<(int, int)>
+                {
+                    (c,r-1), (c,r), (c,r+1), (c+1,r)
+                };
+                    CheckPattern(coords, boardState, 60);
+                }
+
+                // right
+                if (r >= 1 && r < rows - 1 && c > 0)
+                {
+                    var coords = new List<(int, int)>
+                {
+                    (c,r-1), (c,r), (c,r+1), (c-1,r)
+                };
+                    CheckPattern(coords, boardState, 60);
+                }
+            }
+        }
+    }
+
+    public void EvalSpecialPatterns(List<List<int>> boardState)
+    {
+        // Diagonals
+        CheckPattern(new List<(int, int)> { (0, 0), (1, 1), (2, 2), (3, 3) }, boardState, 50);
+        CheckPattern(new List<(int, int)> { (4, 0), (3, 1), (2, 2), (1, 3) }, boardState, 50);
+        // V
+        CheckPattern(new List<(int, int)> { (0, 0), (1, 1), (2, 2), (3, 1), (4, 0) }, boardState, 75);
+        // inverted V
+        CheckPattern(new List<(int, int)> { (0, 3), (1, 2), (2, 1), (3, 2), (4, 3) }, boardState, 75);
+        // W
+        CheckPattern(new List<(int, int)> { (0, 0), (1, 1), (2, 0), (3, 1), (4, 0) }, boardState, 100);
+        // M
+        CheckPattern(new List<(int, int)> { (0, 3), (1, 2), (2, 3), (3, 2), (4, 3) }, boardState, 100);
+
+        for (int col = 0; col < boardState.Count - 1; col++)
+        {
+            for (int row = 0; row < boardState[col].Count - 1; row++)
+            {
+                var coords = new List<(int, int)>
+            {
+                (col,row), (col+1,row),
+                (col,row+1), (col+1,row+1)
+            };
+                CheckPattern(coords, boardState, 40);
+            }
+        }
+    }
+
+    private void CheckPattern(List<(int col, int row)> coords, List<List<int>> boardState, int worth)
+    {
+        if (coords.Count == 0) return;
+
+        int firstVal = boardState[coords[0].col][coords[0].row];
+        foreach (var (c, r) in coords)
+        {
+            if (boardState[c][r] != firstVal)
+                return;
+        }
+
+        SlotWinEvent winEvent = new SlotWinEvent();
+        winEvent.winningItems = new List<SlotItem>();
+        foreach (var (c, r) in coords)
+            winEvent.winningItems.Add(GetSlotItem(c, r));
+
+        winEvent.winWorth = worth;
+        winningEvents.Add(winEvent);
     }
 
     public IEnumerator ProcessWinnings()

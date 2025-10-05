@@ -96,6 +96,7 @@ public class SlotMachine : MonoBehaviour
 
     public void Spin()
     {
+        PlayerDataManager.Instance.AddCoins(-30);
         foreach (SlotColumn col in columns)
         {
             StartCoroutine(col.StartSpinning());
