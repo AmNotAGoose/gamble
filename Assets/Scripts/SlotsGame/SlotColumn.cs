@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.Progress;
 
 public class SlotColumn : MonoBehaviour
 {
@@ -8,9 +9,12 @@ public class SlotColumn : MonoBehaviour
     public float acceleration;
     public float curVelocity;
     public float maxVelocity;
+    public float minVelocity;
 
     public float maxY = 3;
     public float minY = -3;
+
+    public float itemSpacing = 2f;
 
     public bool isStopped = true;
 
@@ -19,22 +23,46 @@ public class SlotColumn : MonoBehaviour
 
     private void Start()
     {
+        ArrangeItems();
+        StartCoroutine(Test());
+    }
+
+    IEnumerator Test()
+    {
         StartCoroutine(StartSpinning());
+        yield return new WaitForSeconds(2f);
+        StartCoroutine(StopSpinning());
+    }
+
+    void ArrangeItems()
+    {
+        for (int i = 0; i < slotItems.Count; i++)
+        {
+            slotItems[i].transform.position = new Vector2(slotItems[i].transform.position.x, maxY - i * itemSpacing);
+        }
     }
 
     private void Update()
     {
-        foreach (SlotItem item in slotItems)
+        for (int i = 0; i < slotItems.Count; i++)
         {
-            item.transform.position = new Vector2(item.transform.position.x, item.transform.position.y - curVelocity * Time.deltaTime);
-        
-            if (item.transform.position.y < minY)
+            SlotItem curItem = slotItems[i];
+
+            curItem.transform.position += Vector3.down * curVelocity * Time.deltaTime;
+
+            if (curItem.transform.position.y < minY)
             {
-                item.transform.position = new Vector2(item.transform.position.x, maxY);
+                float highestY = float.MinValue;
+                foreach (SlotItem other in slotItems)
+                {
+                    if (other != curItem && other.transform.position.y > highestY)
+                        highestY = other.transform.position.y;
+                }
+
+                curItem.transform.position = new Vector2(curItem.transform.position.x, highestY + itemSpacing);
             }
         }
     }
-
 
     public IEnumerator StartSpinning()
     {
@@ -42,16 +70,28 @@ public class SlotColumn : MonoBehaviour
 
         while (!isStopped)
         {
-            curVelocity = Mathf.Min(curVelocity + acceleration * Time.deltaTime, maxVelocity); // read it carefully
+            curVelocity = Mathf.Min(curVelocity + acceleration * Time.deltaTime, maxVelocity);
             yield return null;
         }
-        curVelocity = 0; 
         yield break;
     }
 
-    // i am NOT doing physics in my spare time, so i wont be implementing rigged / predetermined games
-    public void StopSpinning()
+    public IEnumerator StopSpinning()
     {
         isStopped = true;
+
+        while (isStopped)
+        {
+            curVelocity = Mathf.Max(curVelocity - acceleration * Time.deltaTime, minVelocity);
+
+            if (curVelocity == minVelocity)
+            {
+                yield return new WaitForSeconds(0.5f);
+                curVelocity = 0;
+                isStopped = false;
+            }
+             
+            yield return null;
+        }
     }
 }
