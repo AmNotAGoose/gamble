@@ -124,7 +124,8 @@ public class SlotsGame : MonoBehaviour
         CheckPattern(new List<(int, int)> { (0, 3), (1, 2), (2, 1), (3, 2), (4, 3) }, boardState, 75);
         // W
         CheckPattern(new List<(int, int)> { (0, 0), (1, 1), (2, 0), (3, 1), (4, 0) }, boardState, 100);
-        // M
+        //
+        // 
         CheckPattern(new List<(int, int)> { (0, 3), (1, 2), (2, 3), (3, 2), (4, 3) }, boardState, 100);
 
         for (int col = 0; col < boardState.Count - 1; col++)
