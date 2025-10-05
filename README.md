@@ -14,4 +14,6 @@ Supports auto & manual gambling
 
 Very basic functionality becuz i have a test to study for lol, I will improve on this next week 
 
+AI used for like 1 function 
+
 happy gambling !
