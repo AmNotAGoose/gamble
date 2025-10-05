@@ -30,17 +30,16 @@ public class SlotColumn : MonoBehaviour
         leadItem = slotItems[0];
         ArrangeItems();
 
-        values = new List<int> { 0, 2, 3, 1 };
+        //values = new List<int> { 0, 2, 3, 1 };
 
-        StartCoroutine(SpinAndLandOn(values));
+        //StartCoroutine(AutoSpin(values));
     }
 
-    public IEnumerator SpinAndLandOn(List<int> _values)
+    public IEnumerator AutoSpin(List<int> _values)
     {
-        values = _values;
         StartCoroutine(StartSpinning());
         yield return new WaitForSeconds(4f);
-        StartCoroutine(StopSpinning());
+        StartCoroutine(StopSpinning(_values));
     }
 
     void ArrangeItems()
@@ -95,8 +94,9 @@ public class SlotColumn : MonoBehaviour
         yield break;
     }
 
-    public IEnumerator StopSpinning()
+    public IEnumerator StopSpinning(List<int> _values)
     {
+        values = _values;
         isStopped = true;
 
         curVelocity = 0;
