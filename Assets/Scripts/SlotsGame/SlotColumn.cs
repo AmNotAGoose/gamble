@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEditor.Progress;
 
 public class SlotColumn : MonoBehaviour
 {
@@ -22,22 +20,24 @@ public class SlotColumn : MonoBehaviour
     public bool isStopped = true;
     public bool minVelocityReached = false;
 
-    private bool readyToSnap = false;
-
-    // Items
+    // Items (idx 1, 2, 3, 4 are valid)
     public List<SlotItem> slotItems;
     public SlotItem leadItem;
+    public List<int> values;
 
     private void Start()
     {
         leadItem = slotItems[0];
         ArrangeItems();
 
-        StartCoroutine(Test());
+        values = new List<int> { 1, 2, 3, 4 };
+
+        StartCoroutine(SpinAndLandOn(values));
     }
 
-    IEnumerator Test()
+    public IEnumerator SpinAndLandOn(List<int> _values)
     {
+        values = _values;
         StartCoroutine(StartSpinning());
         yield return new WaitForSeconds(2f);
         StartCoroutine(StopSpinning());
@@ -46,12 +46,12 @@ public class SlotColumn : MonoBehaviour
     void ArrangeItems()
     {
         for (int i = 0; i < slotItems.Count; i++)
-             
         {
             slotItems[i].transform.position = new Vector2(slotItems[i].transform.position.x, maxY - i * itemSpacing);
             slotItems[i].SetStartingY();
         }
     }
+
     private void Update()
     {
         for (int i = 0; i < slotItems.Count; i++)
@@ -93,11 +93,12 @@ public class SlotColumn : MonoBehaviour
     {
         isStopped = true;
 
-        foreach (var item in slotItems)
+        for (int i = 0; i < slotItems.Count; i++)
         {
+            slotItems[i].SetValue(values[i]);
             curVelocity = 0;
             yield return null;
-            item.GoToStartingY(0);
+            slotItems[i].GoToStartingY(0);
         }
 
         yield break;
