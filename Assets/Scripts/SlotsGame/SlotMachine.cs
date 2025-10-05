@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class SlotMachine : MonoBehaviour
@@ -10,7 +11,9 @@ public class SlotMachine : MonoBehaviour
 
     bool isAutoSpinning = false;
     bool isSpinning = false;
-    bool readyForNext = false;
+
+    public event Action<string> spinButtonState;
+    public event Action<string> autoSpinButtonState;
 
     private void Start()
     {
@@ -31,17 +34,62 @@ public class SlotMachine : MonoBehaviour
         return sampleValues;
     }
 
-    public IEnumerator AutoSpin(Func<List<List<int>>> func)
+
+    public IEnumerator _AutoSpin(Func<List<List<int>>> func)
     {
+        autoSpinButtonState?.Invoke("stop");
+        isAutoSpinning = true;
         while (true)
         {
             Spin();
             yield return new WaitForSeconds(3f);
             StartCoroutine(Stop(func));
-            yield return new WaitUntil(() => !isSpinning);
+            yield return new WaitUntil(() => !isSpinning && SlotsGame.Instance.evalDone);
 
-            if (isAutoSpinning) yield break;
+            SlotsGame.Instance.evalDone = false;
+
+            if (!isAutoSpinning)
+            {
+                autoSpinButtonState?.Invoke("spin");
+                yield break;
+            }
         }
+    }
+
+    public void ToggleSpin()
+    {
+        StartCoroutine(_ToggleSpin(SlotsGame.Instance.GenerateRandomGame));
+    }
+
+    public void ToggleAutoSpin()
+    {
+        if (isAutoSpinning)
+        {
+            isAutoSpinning = false;
+        } else
+        {
+            StartCoroutine(_AutoSpin(SlotsGame.Instance.GenerateRandomGame));
+        }
+    }
+
+
+    public IEnumerator _ToggleSpin(Func<List<List<int>>> func)
+    {
+        if (isSpinning)
+        {
+            StartCoroutine(Stop(func));
+            spinButtonState?.Invoke("wait");
+            yield return new WaitUntil(() => !isSpinning && SlotsGame.Instance.evalDone);
+            SlotsGame.Instance.evalDone = false;
+            spinButtonState?.Invoke("spin");
+        } else
+        {
+            Spin();
+            spinButtonState?.Invoke("wait");
+            yield return new WaitForSeconds(1.5f);
+            spinButtonState?.Invoke("stop");
+        }
+
     }
 
     public void Spin()

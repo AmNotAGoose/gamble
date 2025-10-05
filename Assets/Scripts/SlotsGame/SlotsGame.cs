@@ -1,8 +1,7 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using JetBrains.Annotations;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class SlotsGame : MonoBehaviour
@@ -17,6 +16,8 @@ public class SlotsGame : MonoBehaviour
 
     public List<Sprite> itemValueSprites;
 
+    public bool evalDone = false;
+
     private void Awake()
     {
         Instance = this;
@@ -24,40 +25,84 @@ public class SlotsGame : MonoBehaviour
 
     private void Start()
     {
-        StartCoroutine(slotMachine.AutoSpin(GenerateRandomGame));
-        
+        //StartCoroutine(slotMachine.AutoSpin(GenerateRandomGame));
     }
 
     public List<List<int>> GenerateRandomGame()
     {
-            
+
         List<List<int>> game = new List<List<int>>()
         {
-            new List<int>() { 1, 1, 1, 1 },
-            new List<int>() { 0, 1, 2, 3 },
+            new List<int>() { 2, 1, 2, 3 },
+            new List<int>() { 3, 1, 1, 1 },
             new List<int>() { 0, 1, 2, 3 },
             new List<int>() { 0, 1, 2, 3 },
             new List<int>() { 0, 1, 2, 3 },
         };
+
+        //for (int i = 0; i < game.Count; i++)
+        //{
+        //    for (int j = 0; j < game[i].Count; j++)
+        //    {
+        //        game[i][j] = UnityEngine.Random.Range(0, itemValueSprites.Count);
+        //    }
+        //}
+
 
         return game;
     }
 
     public void EvaluateState(List<List<int>> boardState)
     {
-        EvalVertical(boardState);
-        ProcessWinnings();
+        EvalVertical(boardState); 
+        EvalHorizontal(boardState);
+        StartCoroutine(ProcessWinnings());
     }
 
-    public void ProcessWinnings()
+    public IEnumerator ProcessWinnings()
     {
+        
         foreach (SlotWinEvent win in winningEvents)
         {
             PlayerDataManager.Instance.AddCoins(win.winWorth);
             slotMachine.DisplayMatch(win);
+
+            yield return new WaitForSeconds(0.5f);
         }
 
         winningEvents.Clear();
+        evalDone = true;
+    }
+
+    public void EvalHorizontal(List<List<int>> boardState)
+    {
+        for (int row = 0; row < boardState[0].Count; row++)
+        {
+            bool allEqual = true;
+
+            List<SlotItem> curItems = new List<SlotItem>();
+            curItems.Add(GetSlotItem(0, row));
+            int prev = boardState[0][row];
+
+            for (int col = 1; col < boardState.Count; col++)
+            {
+                curItems.Add(GetSlotItem(col, row));
+                if (boardState[col][row] != prev)
+                {
+                    allEqual = false;
+                    break;
+                }
+                prev = boardState[col][row];
+            }
+
+            if (allEqual)
+            {
+                SlotWinEvent winEvent = new SlotWinEvent();
+                winEvent.winningItems = curItems;
+                winEvent.winWorth = 30;
+                winningEvents.Add(winEvent);
+            }
+        }
     }
 
     public void EvalVertical(List<List<int>> boardState)
