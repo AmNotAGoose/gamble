@@ -30,7 +30,7 @@ public class SlotColumn : MonoBehaviour
         leadItem = slotItems[0];
         ArrangeItems();
 
-        values = new List<int> { 1, 2, 3, 1 };
+        values = new List<int> { 0, 2, 3, 1 };
 
         StartCoroutine(SpinAndLandOn(values));
     }
@@ -39,7 +39,7 @@ public class SlotColumn : MonoBehaviour
     {
         values = _values;
         StartCoroutine(StartSpinning());
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(4f);
         StartCoroutine(StopSpinning());
     }
 
@@ -49,9 +49,15 @@ public class SlotColumn : MonoBehaviour
         {
             slotItems[i].transform.position = new Vector2(slotItems[i].transform.position.x, maxY - i * itemSpacing);
             slotItems[i].SetStartingY();
+            RandomizeItemSymbol(slotItems[i]);
         }
     }
 
+    void RandomizeItemSymbol(SlotItem _item)
+    {
+        _item.SetValue(Random.Range(0, SlotsGame.Instance.itemValueSprites.Count));    
+    }
+    
     private void Update()
     {
         for (int i = 0; i < slotItems.Count; i++)

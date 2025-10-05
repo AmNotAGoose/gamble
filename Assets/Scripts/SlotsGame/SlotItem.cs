@@ -22,6 +22,6 @@ public class SlotItem : MonoBehaviour
     public void SetValue(int _value)
     {
         value = _value;
-        valueRenderer.sprite = SlotsGame.Instance.itemValueSprites[value - 1];
+        valueRenderer.sprite = SlotsGame.Instance.itemValueSprites[value];
     }
 }
