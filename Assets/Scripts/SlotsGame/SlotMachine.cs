@@ -13,7 +13,7 @@ public class SlotMachine : MonoBehaviour
 
     private void Start()
     {
-        StartCoroutine(AutoSpin(GetSampleValues));
+        //StartCoroutine(AutoSpin(GetSampleValues));
     }
 
     List<List<int>> GetSampleValues()
@@ -61,5 +61,10 @@ public class SlotMachine : MonoBehaviour
             yield return new WaitForSeconds(0.5f);
         }
         isSpinning = false;
+    }
+
+    public void DisplayMatches(List<SlotWinEvent> matches)
+    {
+         
     }
 }
