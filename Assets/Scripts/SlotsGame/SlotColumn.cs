@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using static UnityEditor.Progress;
 
@@ -14,16 +15,22 @@ public class SlotColumn : MonoBehaviour
     public float maxY = 3;
     public float minY = -3;
 
+    public float centerY = 0f;
+
     public float itemSpacing = 2f;
 
     public bool isStopped = true;
+    public bool minVelocityReached = false;
 
     // Items
     public List<SlotItem> slotItems;
+    public SlotItem leadItem;
 
     private void Start()
     {
+        leadItem = slotItems[0];
         ArrangeItems();
+
         StartCoroutine(Test());
     }
 
@@ -56,14 +63,22 @@ public class SlotColumn : MonoBehaviour
                 foreach (SlotItem other in slotItems)
                 {
                     if (other != curItem && other.transform.position.y > highestY)
+                    {
                         highestY = other.transform.position.y;
+                    }
+                }
+
+                if (minVelocityReached && curItem == leadItem)
+                {
+                    curVelocity = 0f;
+                    isStopped = false;
                 }
 
                 curItem.transform.position = new Vector2(curItem.transform.position.x, highestY + itemSpacing);
             }
         }
     }
-
+     
     public IEnumerator StartSpinning()
     {
         isStopped = false;
@@ -86,12 +101,13 @@ public class SlotColumn : MonoBehaviour
 
             if (curVelocity == minVelocity)
             {
-                yield return new WaitForSeconds(0.5f);
-                curVelocity = 0;
-                isStopped = false;
+                minVelocityReached = true;
             }
              
             yield return null;
         }
+
+        minVelocityReached = false;
+        yield break;
     }
 }
