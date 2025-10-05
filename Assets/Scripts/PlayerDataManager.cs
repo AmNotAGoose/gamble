@@ -8,7 +8,7 @@ public class PlayerDataManager : MonoBehaviour
     public static PlayerDataManager Instance;
     public int coins = 500;
 
-    public List<Action<int>> coinChangeSubscribers = new List<Action<int>>();
+    public event Action<int> OnCoinChanged;
 
     private void Awake()
     {
@@ -20,30 +20,10 @@ public class PlayerDataManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(Instance);
     }
-    private void OnLevelWasLoaded(int level)
-    {
-        InformSubscribers();
-    }
-
-    public void InformSubscribers()
-    {
-        foreach (Action<int> subscriber in coinChangeSubscribers)
-        {
-            subscriber(coins);
-        }
-    }
 
     public void AddCoins(int numberOfCoins)
     {
         coins += numberOfCoins;
-        foreach (Action<int> subscriber in coinChangeSubscribers)
-        {
-            subscriber(coins);
-        }
-    }
-
-    public void SubscribeToCoinChanges(Action<int> action)
-    {
-        coinChangeSubscribers.Add(action);
+        OnCoinChanged?.Invoke(coins);
     }
 }
