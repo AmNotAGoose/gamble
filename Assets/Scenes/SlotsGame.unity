@@ -233,7 +233,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 51430740}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 532705263}
+        m_TargetAssemblyTypeName: SlotMachine, Assembly-CSharp
+        m_MethodName: ToggleAutoSpin
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &51430740
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -354,7 +366,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 89910695}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 360693694}
+        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
+        m_MethodName: ChangeScene
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: menu
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &89910695
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1102,6 +1126,7 @@ GameObject:
   - component: {fileID: 360693691}
   - component: {fileID: 360693692}
   - component: {fileID: 360693693}
+  - component: {fileID: 360693694}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -1156,8 +1181,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coinText: {fileID: 1512300113}
-  spinButton: {fileID: 0}
-  spinButtonText: {fileID: 0}
+  spinButton: {fileID: 1699776831}
+  spinButtonText: {fileID: 96920111}
+  autoSpinButton: {fileID: 51430739}
+  autoSpinButtonText: {fileID: 1501308185}
+--- !u!114 &360693694
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 360693690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e1803f603afcd1489620603cddea3f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  menuPanels: []
+  curPanel: {fileID: 0}
 --- !u!114 &371369890 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 830974219790777733, guid: 33bba401df866c9458683f83cf9b1f18, type: 3}
@@ -2617,7 +2658,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -243.19165, y: 409.00415}
+  m_AnchoredPosition: {x: -228, y: -161}
   m_SizeDelta: {x: 79.9517, y: 79.9517}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &962274727
@@ -3856,8 +3897,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -75, y: 409}
-  m_SizeDelta: {x: 200, y: 50}
+  m_AnchoredPosition: {x: 57.395, y: -175.98}
+  m_SizeDelta: {x: 442.79, y: 49.994}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1512300113
 MonoBehaviour:
@@ -3914,7 +3955,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 1024
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0

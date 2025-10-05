@@ -9,7 +9,10 @@ public class MenuManager : MonoBehaviour
 
     private void Start()
     {
-        curPanel = menuPanels[0];
+        if (menuPanels.Count > 0)
+        {
+            curPanel = menuPanels[0];
+        }
     }
 
     public void ChangeMenuPanel(string menuName)

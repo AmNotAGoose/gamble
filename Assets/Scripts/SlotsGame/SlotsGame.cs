@@ -33,11 +33,11 @@ public class SlotsGame : MonoBehaviour
 
         List<List<int>> game = new List<List<int>>()
         {
-            new List<int>() { 2, 1, 2, 3 },
-            new List<int>() { 3, 1, 1, 1 },
-            new List<int>() { 0, 1, 2, 3 },
-            new List<int>() { 0, 1, 2, 3 },
-            new List<int>() { 0, 1, 2, 3 },
+            new List<int>() { 3, 1, 2, 3 },
+            new List<int>() { 3, 3, 3, 3 },
+            new List<int>() { 0, 1, 3, 3 },
+            new List<int>() { 0, 3, 1, 3 },
+            new List<int>() { 3, 1, 2, 3 },
         };
 
         //for (int i = 0; i < game.Count; i++)
@@ -139,6 +139,6 @@ public class SlotsGame : MonoBehaviour
 
     public SlotItem GetSlotItem(int col, int row)
     {
-        return slotMachine.columns[col].slotItems[row];
+        return slotMachine.columns[col].slotItems[row + 1];
     }
 }

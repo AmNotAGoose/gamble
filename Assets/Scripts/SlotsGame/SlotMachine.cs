@@ -15,6 +15,8 @@ public class SlotMachine : MonoBehaviour
     public event Action<string> spinButtonState;
     public event Action<string> autoSpinButtonState;
 
+    public SlotMachineEffects effects;
+
     private void Start()
     {
         //StartCoroutine(AutoSpin(GetSampleValues));
@@ -116,6 +118,6 @@ public class SlotMachine : MonoBehaviour
 
     public void DisplayMatch(SlotWinEvent match)
     {
-         
+        StartCoroutine(effects.PlayWin(match));
     }
 }
