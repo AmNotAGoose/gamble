@@ -30,7 +30,7 @@ public class SlotColumn : MonoBehaviour
         leadItem = slotItems[0];
         ArrangeItems();
 
-        values = new List<int> { 1, 2, 3, 4 };
+        values = new List<int> { 1, 2, 3, 1 };
 
         StartCoroutine(SpinAndLandOn(values));
     }
@@ -93,12 +93,19 @@ public class SlotColumn : MonoBehaviour
     {
         isStopped = true;
 
+        curVelocity = 0;
+        yield return null;
+
         for (int i = 0; i < slotItems.Count; i++)
         {
-            slotItems[i].SetValue(values[i]);
-            curVelocity = 0;
-            yield return null;
             slotItems[i].GoToStartingY(0);
+        }
+
+        int valueIdx = 0;
+        for (int i = 1; i <= 4; i++)
+        {
+            slotItems[i].SetValue(values[valueIdx]);
+            valueIdx++;
         }
 
         yield break;
